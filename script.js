@@ -21,7 +21,6 @@ Graph.prototype.dataParse = function() {
 			cord.y = this.options.height - cord.val * this.yCoef;
 		});
 	});
-	console.log(this.dataObj);
 }
 
 Graph.prototype.createCanvas = function() {
@@ -40,16 +39,28 @@ Graph.prototype.addListeners = function() {
 		this.ctx.moveTo(e.offsetX, 0);
 		this.ctx.lineTo(e.offsetX, this.canvas.height);
 		this.ctx.stroke();
-		this.createPopup([], e.offsetX, e.offsetY);
+		this.createPopup(this.data, e.offsetX, e.offsetY);
 	})
 }
 
 Graph.prototype.createPopup = function(data, x, y) {
-	x = Math.min(x, this.canvas.width * 0.75);
-	y = Math.min(y, this.canvas.height * 0.75);
+	dx = Math.min(x, this.canvas.width * 0.75);
+	dy = Math.min(y, this.canvas.height * 0.75);
 	this.ctx.fillStyle = '#fff';
-	this.ctx.fillRect(x, y, this.canvas.width / 4, this.canvas.height / 4);
-	console.log(this.findNearest(this.data[0], x));
+	this.ctx.fillRect(dx, dy, this.canvas.width / 4, this.canvas.height / 4);
+
+	data.forEach((item, i, arr) => {
+		var prop = this.findNearest(item, x),
+			tX = dx + 10,
+			tY = dy + 10 * (i + 1);
+		this.printText(prop, tX, tY);
+	})
+}
+
+Graph.prototype.printText = function(data, x, y) {
+	this.ctx.fillStyle = '#000'
+	this.ctx.font = this.canvas.width / 40 + "px Arial";
+	this.ctx.fillText(data.val, x, y);
 }
 
 Graph.prototype.drawGraph = function() {
@@ -125,7 +136,7 @@ var cords = [[
 	},
 	{
 		date: 1499037374670,
-		val: 40,
+		val: 400,
 	},
 	{
 		date: 1499037474670,
@@ -184,7 +195,6 @@ var cords = [[
 var options = {
 	width: 500,
 	height: 200,
-	step: 7
 }
 var testGraph = new Graph(cords, options);
 testGraph.start();
